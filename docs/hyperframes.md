@@ -7,33 +7,63 @@ Users never see the name "HyperFrames" in the product. They see **Create Animati
 
 ## Current status
 
-**Not yet implemented — Phase 6.** Two prerequisites are unmet in this environment:
+**Not yet implemented — Phase 6.** The toolchain is now in place:
 
-| Prerequisite | Status | Impact |
-| --- | --- | --- |
-| HyperFrames Claude skill | ❌ not installed | Composition syntax must not be written until installed |
-| FFmpeg | ❌ not installed | `render` cannot produce video output |
-| HyperFrames CLI | ✅ available on npm (`hyperframes@0.8.12`, Apache-2.0) | Runs via `npx` |
-| Node.js | ✅ 22.22.2 | Meets the CLI's modern-Node requirement |
+| Prerequisite | Status |
+| --- | --- |
+| HyperFrames CLI | ✅ `hyperframes@0.8.12` (Apache-2.0), via `npx` |
+| Node.js | ✅ 22.22.2 — meets the CLI's `>= 22` requirement |
+| HyperFrames skills | ✅ 20 installed, verified current |
+| FFmpeg / FFprobe | ✅ 6.1.1 |
+| Chrome Headless Shell | ✅ 152.0.7977.30 (required for local rendering) |
+
+Optional and not needed for Phase 6: whisper-cpp (transcription), Kokoro (local TTS),
+MusicGen (local BGM), a running Docker daemon (containerised rendering).
 
 **Rule: do not improvise the framework API.** This document covers *our integration
 design* and the *workflow*. Composition syntax, component names, and configuration format
-must come from the installed skill or official HyperFrames documentation at implementation
+must come from the installed skills or official HyperFrames documentation at implementation
 time — not from memory and not from inference. Writing plausible-looking HyperFrames code
 without that source would be a fabricated integration.
 
-## Prerequisites before Phase 6
+## Installing the toolchain
+
+The CLI installs its own agent skills — they ship inside the npm package and are copied to
+`~/.claude/skills` (and `~/.agents/skills`).
 
 ```bash
-# Install the HyperFrames Claude skill (required — provides authoritative syntax)
+# Skills: installs the full published set
+npx hyperframes skills
 
-# Install FFmpeg (required for rendering)
-apt-get install -y ffmpeg    # or the platform equivalent
+# Verify — exits non-zero if anything is stale or missing
+npx hyperframes skills check
 
-# Verify
-ffmpeg -version
-npx hyperframes --help
+# FFmpeg (required for rendering)
+apt-get update && apt-get install -y ffmpeg
+
+# Chrome Headless Shell (required for local rendering)
+npx hyperframes browser ensure
+
+# Confirm the whole toolchain
+npx hyperframes doctor
 ```
+
+`npx hyperframes init` also refreshes the core skill set as a side effect. If the CLI is
+unavailable, the fallback is `npx skills add heygen-com/hyperframes --all`.
+
+**These install to the machine, not the repo.** In an ephemeral environment — a fresh
+Claude Code web session, a CI runner — they must be reinstalled. A `SessionStart` hook is
+the durable fix if that becomes a recurring cost.
+
+### Installed skills
+
+The core set is `hyperframes` (the mandatory entry point, which routes to the rest),
+plus `hyperframes-core` (composition contract), `hyperframes-animation`,
+`hyperframes-keyframes`, `hyperframes-creative`, `hyperframes-cli`,
+`hyperframes-registry`, `hyperframes-audio`, and `media-use`.
+
+`hyperframes-core` and `hyperframes-animation` are the ones Phase 6 depends on:
+the composition contract and the motion primitives.
 
 ## Integration Design
 

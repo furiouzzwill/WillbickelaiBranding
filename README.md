@@ -51,6 +51,8 @@ Version choices were resolved against the npm registry at scaffold time, not fro
 - **Node.js 20.9+** (developed on 22.22.2)
 - **npm** (developed on 10.9.7)
 - **FFmpeg** — required only for HyperFrames rendering (Phase 6+). Not needed for Phases 1–5.
+- **HyperFrames toolchain** — see [docs/hyperframes.md](./docs/hyperframes.md#installing-the-toolchain).
+  Installs to the machine, not the repo, so ephemeral environments need it reinstalled.
 
 ### Install
 
@@ -119,9 +121,11 @@ Supabase values set.
 - [x] Git repository on `claude/ai-brand-builder-saas-cq8gs0`
 - [x] Package versions resolved from the live registry
 - [x] OpenAI image model verified against official docs (`gpt-image-2`)
-- [x] HyperFrames CLI availability confirmed on npm (`hyperframes@0.8.12`)
-- [ ] ⚠️ **FFmpeg not installed** — blocks Phase 6 rendering only
-- [ ] ⚠️ **HyperFrames Claude skill not installed** — must be installed before Phase 6
+- [x] HyperFrames CLI confirmed (`hyperframes@0.8.12`)
+- [x] HyperFrames skills installed via `npx hyperframes skills` (20, verified current)
+- [x] FFmpeg / FFprobe 6.1.1 installed
+- [x] Chrome Headless Shell installed for local rendering
+- [x] `npx hyperframes doctor` — all required checks pass
 
 ### Phase 1 — Application Foundation ✅
 - [x] Next.js + TypeScript (strict) + Tailwind v4
@@ -169,7 +173,6 @@ Supabase values set.
 - [ ] Prompt-builder unit tests
 
 ### Phase 6 — HyperFrames Proof of Concept
-- [ ] Install the HyperFrames Claude skill **and FFmpeg** first
 - [ ] Brand DNA → HyperFrames design config (auto-generated `DESIGN.md`)
 - [ ] Motion specification schema + validator
 - [ ] Controlled renderer: motion spec → composition (no arbitrary generated code executed)
