@@ -54,15 +54,39 @@ Version choices were resolved against the npm registry at scaffold time, not fro
 - **HyperFrames toolchain** — see [docs/hyperframes.md](./docs/hyperframes.md#installing-the-toolchain).
   Installs to the machine, not the repo, so ephemeral environments need it reinstalled.
 
-### Install
+### Just want to look at the UI?
+
+The placeholder values in `.env.example` are enough to boot the app and browse the
+landing, sign-in, and sign-up pages. No Supabase account needed:
 
 ```bash
 npm install
-cp .env.example .env.local   # then fill in the values
+cp .env.example .env.local
 npm run dev
 ```
 
-The app runs at http://localhost:3000.
+Open http://localhost:3000. Signing in won't work and `/dashboard` will bounce you back
+to sign-in — that needs real credentials, below.
+
+### Full setup
+
+1. Create a free project at [supabase.com](https://supabase.com).
+2. In the dashboard, go to **Project Settings → API**.
+3. Copy the **Project URL** and the **anon / publishable key** into `.env.local`:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+```
+
+4. Restart `npm run dev`, then sign up at http://localhost:3000/sign-up.
+
+If email confirmation is enabled (the Supabase default), confirm via the emailed link
+before signing in — or turn it off under **Authentication → Sign In / Providers** while
+developing.
+
+The app fails fast with a readable error if these are missing, rather than crashing
+mid-request on an undefined value.
 
 ### Scripts
 
